@@ -1,5 +1,92 @@
 # Changelog
 
+## [v2.1.138] — 2026-05-09
+
+### Synced to Claude Code v2.1.138
+
+Bumps tutorial coverage from Claude Code v2.1.131 → v2.1.138 (May 9, 2026
+release). Anthropic shipped seven patches between v2.1.132 and v2.1.138 since
+the last sync.
+
+### Added (English docs)
+
+- `worktree.baseRef` setting (v2.1.133) — controls whether `claude --worktree`
+  branches from `origin/<default>` (`"fresh"`, default) or local `HEAD`
+  (`"head"`). **Behavior change**: the `"fresh"` default reverts the v2.1.128
+  behavior, so users who relied on local-`HEAD` branching after v2.1.128 must
+  opt back in. Documented in `09-advanced-features/README.md`.
+- `autoMode.hard_deny` admin key (v2.1.136) — array of classifier rules that
+  block a class of actions regardless of inferred user intent. Use for
+  actions that must never run in auto mode (e.g., `rm -rf /`, force-push to
+  protected branches). Unlike `soft_deny`, hard-deny rules are not negotiable
+  by the classifier. Documented in `09-advanced-features/README.md`.
+- `parentSettingsBehavior` admin key (v2.1.133+, admin-tier) — controls how
+  the SDK's `managedSettings` merges with parent-process settings.
+  `"first-wins"` keeps existing precedence; `"merge"` deep-merges values.
+  Documented in `09-advanced-features/README.md`.
+- `Setup` hook event — initial environment setup (one-time per session); use
+  to provision tooling or install deps. Brings the documented hook-events
+  total from 28 to 29. Documented in `06-hooks/README.md`.
+- `effort.level` field in hook input JSON (v2.1.133) — exposes the active
+  effort level (`low`/`medium`/`high`/`xhigh`/`max`) to hooks. Documented in
+  `06-hooks/README.md`.
+- `CLAUDE_CODE_SESSION_ID` environment variable in Bash subprocesses
+  (v2.1.132) — session UUID matching the `session_id` field in hook input
+  JSON, for correlating bash logs with hook telemetry. Documented in
+  `06-hooks/README.md`.
+- `CLAUDE_EFFORT` environment variable in Bash subprocesses (v2.1.133) —
+  active effort level, matching `effort.level` in hook input JSON. Documented
+  in `06-hooks/README.md`.
+- `sandbox.bwrapPath` and `sandbox.socatPath` settings (v2.1.133+, Linux/WSL)
+  — point Claude Code at non-standard install locations for `bubblewrap` and
+  `socat`. Default to `$PATH` lookup. Documented in
+  `09-advanced-features/README.md`.
+- `CLAUDE_CODE_DISABLE_ALTERNATE_SCREEN` environment variable (v2.1.132).
+  Documented in `09-advanced-features/README.md`.
+- `CLAUDE_CODE_ENABLE_FEEDBACK_SURVEY_FOR_OTEL` environment variable
+  (v2.1.136) — re-enables the session-quality survey for organizations
+  capturing OpenTelemetry data; off by default in OTEL deployments.
+  Documented in `09-advanced-features/README.md`.
+
+### Changed
+
+- **Behavior change**: Plan mode now blocks all file writes unconditionally
+  (v2.1.136), including when a matching `Edit(...)` rule exists in
+  `permissions.allow`. Previously a permissive `Edit(...)` rule could let
+  writes through in plan mode; that bypass is closed. Workflows that
+  depended on the older behavior must exit plan mode (`Shift+Tab`) before
+  editing. Documented in `09-advanced-features/README.md`.
+- Plugin spaced slash commands (e.g., `/myplugin review`) now resolve to
+  `/myplugin:review`. Plugin `skills` config entries no longer hide the
+  default `skills/` directory — both are merged. Documented in
+  `07-plugins/README.md`.
+- MCP servers now persist across `/clear` (v2.1.132+). Documented in
+  `05-mcp/README.md`.
+- Subagents discover project, user, and plugin skills via the Skill tool
+  (v2.1.133). Documented in `04-subagents/README.md`.
+- `--permission-mode` is now honored when resuming plan-mode sessions
+  (v2.1.132). Documented in `09-advanced-features/README.md`.
+- `CronList` output now includes the qualifier(s) and the scheduled prompt
+  body (v2.1.136), so you can audit what each cron will run without opening
+  it. Documented in `09-advanced-features/README.md`.
+
+### Fixed
+
+- OAuth refresh-token concurrent-refresh race condition.
+- INDEX.md count drift: Skills 28 → 16, Plugins 40 → 27, Hooks scripts
+  8 → 9 (recounted from the markdown content tree). The new totals reflect a
+  `.md`-only methodology that scopes counts to tutorial content rather than
+  build artifacts and config.
+- Stale source URLs in `CATALOG.md` (v2.1.118 → v2.1.138) and
+  `claude_concepts_guide.md` (v2.1.117 → v2.1.138). Removed a duplicate
+  legacy footer in the concepts guide.
+
+### Notes for translation maintainers
+
+The `vi/`, `zh/`, `uk/`, and `ja/` localized trees are community-maintained
+and may lag the English source. Contributors syncing translations should diff
+against the English files updated in this release.
+
 ## [v2.1.131] — 2026-05-06
 
 ### Synced to Claude Code v2.1.131
